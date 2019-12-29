@@ -1,6 +1,8 @@
 (ns todo-clj.handler.todo
-    (:require [compojure.core :refer [defroutes context GET POST]]
-              [todo-clj.util.response :as res]))
+    (:require 
+      [compojure.core :refer [defroutes context GET POST]]
+      [todo-clj.util.response :as res]
+      [todo-clj.view.todo :as view]))
 
 (def todo-list
   [{:title "Take a train"}
@@ -8,15 +10,8 @@
    {:title "Work"}
    {:title "Go home"}])
 
-(defn todo-index-view [req]
-  `("<h1>TODO</h1>"
-    "<ul>"
-    ~@(for [{:keys [title]} todo-list]
-           (str "<li>" title "</li>"))
-    "</ul>"))
-
 (defn todo-index [req]
-  (-> (todo-index-view req)
+  (-> (view/todo-index-view req todo-list)
       res/response
       res/html))
 
