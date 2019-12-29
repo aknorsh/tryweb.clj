@@ -1,7 +1,7 @@
 (ns todo-clj.view.layout
     (:require [hiccup.page :refer [html5 include-css include-js]]))
 
-(defn common [req & bodu]
+(defn common [req & body]
   (html5
     [:head
      [:title "TODO-clj"]
