@@ -1,14 +1,16 @@
 (ns todo-clj.util.validation
-    (:require [bouncer.core :as b]))
+    (:require
+      [bouncer.core :as b]
+      [slingshot.slingshot :refer [try+ throw+]]))
 
 (defn validate [& args]
   (let [[errors org+errors] (apply b/validate args)]
     (if (nil? errors)
         org+errors
-        (throw (ex-info "Validation error" errors)))))
+        (throw+ {:type ::validation-error :errors errors}))))
 
 (defmacro with-fallback [fallback & body]
-  `(try
+  `(try+
      ~@body
-     (catch clojure.lang.ExceptionInfo e#
-            (~fallback (ex-data e#)))))
+     (catch [:type ::validation-error] {:keys [errors#]}
+            (~fallback errors#))))
