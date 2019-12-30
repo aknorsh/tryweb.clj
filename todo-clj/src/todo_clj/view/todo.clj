@@ -9,8 +9,8 @@
                   [:div.alert.alert-success [:strong msg]])
         [:h2 "TODO index"]
         [:ul
-         (for [{:keys [title]} todo-list]
-              [:li title])]]
+         (for [{:keys [id title]} todo-list]
+              [:li [:a {:href (str "/todo/" id)} title]])]]
        (layout/common req)))
 
 (defn todo-new-view [req]
@@ -23,11 +23,14 @@
        (layout/common req)))
 
 (defn todo-show-view [req todo]
-  (->> [:section.card
-        (when-let [{:keys [msg]} (:flash req)]
-                  [:div.alert.alert-success [:strong msg]])
-        [:h2 (:title todo)]]
-       (layout/common req)))
+  (let [todo-id (:id todo)]
+    (->> [:section.card
+          (when-let [{:keys [msg]} (:flash req)]
+                    [:div.alert.alert-success [:strong msg]])
+          [:h2 (:title todo)]
+          [:div [:a.wide-link {:href (str "/todo/" todo-id "/edit")} "EDIT"]]
+          [:div [:a.wide-link {:href (str "/todo/" todo-id "/delete")} "DELETE"]]]
+         (layout/common req))))
 
 (defn todo-edit-view [req todo]
   (let [todo-id (get-in req [:params :todo-id])]
