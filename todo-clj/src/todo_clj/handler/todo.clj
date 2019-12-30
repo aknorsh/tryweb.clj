@@ -49,8 +49,18 @@
             (assoc :flash {:msg "Successfully updated TODO."})
             res/html))))
 
-(defn todo-delete [req] "TODO delete")
-(defn todo-delete-post [req] "TODO delete post")
+(defn todo-delete [{:as req :keys [params]}]
+  (if-let [todo (todo/find-first-todo (Long/parseLong (:todo-id params)))]
+          (-> (view/todo-delete-view req todo)
+              res/response
+              res/html)))
+
+(defn todo-delete-post [{:as req :keys [params]}]
+  (let [todo-id (Long/parseLong (:todo-id params))]
+    (if (pos? (first (todo/delete-todo todo-id)))
+        (-> (res/redirect "/todo")
+            (assoc :flash {:msg "Successfully deleted TODO."})
+            res/html))))
 
 (defroutes todo-routes
   (context "/todo" _
